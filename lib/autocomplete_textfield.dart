@@ -25,6 +25,8 @@ class AutoCompleteTextField<T> extends StatefulWidget {
   final bool submitOnSuggestionTap, clearOnSubmit, unFocusOnItemSubmitted;
   final List<TextInputFormatter>? inputFormatters;
   final int minLength;
+  final int maxLength;
+  final bool readOnly;
   final InputDecoration decoration;
   final TextStyle? style;
   final TextInputType keyboardType;
@@ -40,21 +42,15 @@ class AutoCompleteTextField<T> extends StatefulWidget {
   final bool autocorrect;
 
   AutoCompleteTextField(
-      {required
-          this.itemSubmitted, //Callback on item selected, this is the item selected of type <T>
-      required
-          this.key, //GlobalKey used to enable addSuggestion etc
-      required
-          this.suggestions, //Suggestions that will be displayed
-      required
-          this.itemBuilder, //Callback to build each item, return a Widget
-      required
-          this.itemSorter, //Callback to sort items in the form (a of type <T>, b of type <T>)
-      required
-          this.itemFilter, //Callback to filter item: return true or false depending on input text
+      {required this.itemSubmitted, //Callback on item selected, this is the item selected of type <T>
+      required this.key, //GlobalKey used to enable addSuggestion etc
+      required this.suggestions, //Suggestions that will be displayed
+      required this.itemBuilder, //Callback to build each item, return a Widget
+      required this.itemSorter, //Callback to sort items in the form (a of type <T>, b of type <T>)
+      required this.itemFilter, //Callback to filter item: return true or false depending on input text
       this.inputFormatters,
       this.style,
-      this.decoration: const InputDecoration(),
+      this.decoration = const InputDecoration(),
       this.textChanged, //Callback on input text changed, this is a string
       this.textSubmitted, //Callback on input text submitted, this is also a string
       this.onFocusChanged,
@@ -62,17 +58,19 @@ class AutoCompleteTextField<T> extends StatefulWidget {
       this.cursorWidth,
       this.cursorColor,
       this.showCursor,
-      this.keyboardType: TextInputType.text,
-      this.suggestionsAmount:
+      this.keyboardType = TextInputType.text,
+      this.suggestionsAmount =
           5, //The amount of suggestions to show, larger values may result in them going off screen
-      this.submitOnSuggestionTap:
+      this.submitOnSuggestionTap =
           true, //Call textSubmitted on suggestion tap, itemSubmitted will be called no matter what
-      this.clearOnSubmit: true, //Clear autoCompleteTextfield on submit
-      this.textInputAction: TextInputAction.done,
-      this.textCapitalization: TextCapitalization.sentences,
-      this.autocorrect:
+      this.clearOnSubmit = true, //Clear autoCompleteTextfield on submit
+      this.textInputAction = TextInputAction.done,
+      this.textCapitalization = TextCapitalization.sentences,
+      this.autocorrect =
           false, //set the autoroccection on the internal text input field
       this.minLength = 1,
+      this.maxLength = 24,
+      this.readOnly = false,
       this.controller,
       this.focusNode,
       this.autofocus = false,
@@ -118,6 +116,8 @@ class AutoCompleteTextField<T> extends StatefulWidget {
       submitOnSuggestionTap,
       clearOnSubmit,
       minLength,
+      maxLength,
+      readOnly,
       inputFormatters,
       textCapitalization,
       decoration,
@@ -150,6 +150,8 @@ class AutoCompleteTextFieldState<T> extends State<AutoCompleteTextField> {
   Filter<T>? itemFilter;
   int suggestionsAmount;
   int minLength;
+  int maxLength;
+  bool readOnly;
   bool submitOnSuggestionTap, clearOnSubmit, unFocusOnItemSubmitted;
   TextEditingController? controller;
   FocusNode? focusNode;
@@ -181,6 +183,8 @@ class AutoCompleteTextFieldState<T> extends State<AutoCompleteTextField> {
       this.submitOnSuggestionTap,
       this.clearOnSubmit,
       this.minLength,
+      this.maxLength,
+      this.readOnly,
       this.inputFormatters,
       this.textCapitalization,
       this.decoration,
@@ -201,6 +205,8 @@ class AutoCompleteTextFieldState<T> extends State<AutoCompleteTextField> {
       textCapitalization: textCapitalization,
       decoration: decoration,
       style: style,
+      maxLength: maxLength,
+      readOnly: readOnly,
       cursorColor: cursorColor ?? Colors.black,
       showCursor: showCursor ?? true,
       cursorWidth: cursorWidth ?? 1,
@@ -426,6 +432,8 @@ class AutoCompleteTextFieldState<T> extends State<AutoCompleteTextField> {
 class SimpleAutoCompleteTextField extends AutoCompleteTextField<String> {
   final StringCallback? textChanged, textSubmitted;
   final int minLength;
+  final int maxLength;
+  final bool readOnly;
   final ValueSetter<bool>? onFocusChanged;
   final TextEditingController? controller;
   final FocusNode? focusNode;
@@ -442,6 +450,8 @@ class SimpleAutoCompleteTextField extends AutoCompleteTextField<String> {
       this.textChanged,
       this.textSubmitted,
       this.minLength = 1,
+      this.maxLength = 24,
+      this.readOnly = false,
       this.controller,
       this.focusNode,
       this.autofocus = false,
@@ -469,6 +479,8 @@ class SimpleAutoCompleteTextField extends AutoCompleteTextField<String> {
             itemBuilder: null,
             itemSorter: null,
             itemFilter: null,
+            maxLength: maxLength,
+            readOnly: readOnly,
             cursorColor: cursorColor,
             cursorWidth: cursorWidth,
             cursorRadius: cursorRadius,
@@ -497,6 +509,8 @@ class SimpleAutoCompleteTextField extends AutoCompleteTextField<String> {
           submitOnSuggestionTap,
           clearOnSubmit,
           minLength,
+          maxLength,
+          readOnly,
           [],
           textCapitalization,
           decoration,
